@@ -7,9 +7,9 @@ import os
 from pathlib import Path
 from dataclasses import dataclass, field
 
-# Load .env from project root (one level up from this file)
+# Load .env from project root (same directory as config.py)
 from dotenv import load_dotenv
-_env_path = Path(__file__).resolve().parent.parent / ".env"
+_env_path = Path(__file__).resolve().parent / ".env"
 load_dotenv(_env_path)
 
 
