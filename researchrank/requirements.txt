@@ -1,0 +1,18 @@
+# ResearchRank dependencies
+
+# Core
+groq>=0.9.0            # Groq LLM API client (free tier)
+rich>=13.0.0           # Terminal UI / pretty output
+requests>=2.31.0       # HTTP for Semantic Scholar / OpenAlex
+python-dotenv>=1.0.0   # Load .env file
+
+# PDF parsing (install at least one)
+pdfplumber>=0.10.0     # Best quality PDF text extraction (recommended)
+pypdf>=4.0.0           # Fallback PDF parser
+# pymupdf>=1.24.0      # Alternative (larger install)
+
+# DOCX
+python-docx>=1.1.0
+
+# Optional: faster JSON parsing
+# orjson>=3.9.0
