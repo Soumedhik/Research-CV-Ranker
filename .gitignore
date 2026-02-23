@@ -1,0 +1,18 @@
+# ignore environment and data
+.env
+RESUME OTHERS/
+run6/
+results*.json
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+
+# IDE/editor files
+.vscode/
+*.swp
+
+# data or temp
+*.log
