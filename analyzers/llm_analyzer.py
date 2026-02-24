@@ -78,6 +78,13 @@ class AnalyzedResume:
     # Enriched later by PaperAnalyzer
     enriched_papers: list[dict] = field(default_factory=list)
 
+    # Academic metrics (computed by Scorer after enrichment)
+    h_index: int = 0
+    total_citations: int = 0
+    avg_citations: float = 0.0
+    years_active: int = 0            # span of publishing years
+    venue_tier_counts: dict = field(default_factory=dict)   # {"A*":2,"A":3,...}
+
     # Scores (set by Scorer)
     scores: dict = field(default_factory=dict)
     total_score: float = 0.0

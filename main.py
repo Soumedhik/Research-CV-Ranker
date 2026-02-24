@@ -1,24 +1,21 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 ResearchRank - Mass-ranking research resumes/CVs for academic labs.
-Usage: python main.py --resumes ./cvs/ --job "ML researcher focusing on NLP"
+Usage: python rank.py --resumes ./cvs/ --job "ML researcher focusing on NLP"
 """
+
+# ── UTF-8 encoding fix — MUST be before any other import that triggers output ─
+import sys, os
+os.environ["PYTHONUTF8"] = "1"
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 import argparse
 import io
-import os
-import sys
 from pathlib import Path
-
-# Force UTF-8 on Windows to prevent cp1252 UnicodeEncodeError with Rich
-if sys.platform == "win32":
-    os.environ.setdefault("PYTHONUTF8", "1")
-    try:
-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
-    except Exception:
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 from rich.console import Console
 from rich.panel import Panel
@@ -37,12 +34,13 @@ console = Console()
 
 def print_banner():
     banner = Text()
-    banner.append("  RRRRR   EEEEE  SSSSS  EEEEE   AAA   RRRRR   CCCCC  H   H\n", style="bold cyan")
-    banner.append("  R   R   E      S      E      A   A  R   R   C      H   H\n", style="bold cyan")
-    banner.append("  RRRRR   EEEE   SSSSS  EEEE   AAAAA  RRRRR   C      HHHHH\n", style="bold blue")
-    banner.append("  R  R    E          S  E      A   A  R  R    C      H   H\n", style="bold blue")
-    banner.append("  R   R   EEEEE  SSSSS  EEEEE  A   A  R   R   CCCCC  H   H\n", style="bold magenta")
-    banner.append("              R A N K  -  A C A D E M I C  -  T A L E N T\n", style="dim white")
+    banner.append("  ██████╗ ███████╗███████╗███████╗ █████╗ ██████╗  ██████╗██╗  ██╗\n", style="bold cyan")
+    banner.append("  ██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗██╔══██╗██╔════╝██║  ██║\n", style="bold cyan")
+    banner.append("  ██████╔╝█████╗  ███████╗█████╗  ███████║██████╔╝██║     ███████║\n", style="bold blue")
+    banner.append("  ██╔══██╗██╔══╝  ╚════██║██╔══╝  ██╔══██║██╔══██╗██║     ██╔══██║\n", style="bold blue")
+    banner.append("  ██║  ██║███████╗███████║███████╗██║  ██║██║  ██║╚██████╗██║  ██║\n", style="bold magenta")
+    banner.append("  ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝\n", style="bold magenta")
+    banner.append("              R A N K  ·  A C A D E M I C  ·  T A L E N T\n", style="dim white")
     console.print(Panel(banner, border_style="cyan", padding=(0, 2)))
 
 

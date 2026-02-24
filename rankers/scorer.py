@@ -33,6 +33,8 @@ class Scorer:
                 r.scores = {}
                 r.total_score = 0.0
                 continue
+            # Compute deep academic metrics first (used by scoring)
+            self._compute_academic_metrics(r)
             r.scores = self._compute_scores(r)
             r.total_score = self._weighted_total(r.scores)
 
@@ -40,6 +42,51 @@ class Scorer:
         for i, r in enumerate(ranked):
             r.rank = i + 1
         return ranked
+
+    def _compute_academic_metrics(self, r):
+        """Compute h-index, total citations, avg citations, years active, tier counts."""
+        papers = r.enriched_papers or []
+
+        # Build citation list (from enriched, or zeros from raw)
+        if papers:
+            cites = sorted(
+                [p.get("citation_count", 0) or 0 for p in papers],
+                reverse=True,
+            )
+        else:
+            cites = [0] * len(r.publications)
+
+        # H-index: largest h where h papers have >= h citations
+        r.h_index = sum(1 for i, c in enumerate(cites, 1) if c >= i)
+        r.total_citations = sum(cites)
+        r.avg_citations = round(r.total_citations / max(len(cites), 1), 1)
+
+        # Years active (span of publication years)
+        pub_years = []
+        for p in papers:
+            y = p.get("year")
+            if y and isinstance(y, int) and 1990 <= y <= 2030:
+                pub_years.append(y)
+        if not pub_years:
+            for p in r.publications:
+                if p.year and 1990 <= p.year <= 2030:
+                    pub_years.append(p.year)
+        if pub_years:
+            r.years_active = max(pub_years) - min(pub_years) + 1
+        else:
+            r.years_active = 0
+
+        # Venue tier counts
+        tier_counts: dict = {"A*": 0, "A": 0, "B": 0, "C": 0, "?": 0}
+        if papers:
+            for p in papers:
+                t = p.get("venue_rank", "?")
+                tier_counts[t] = tier_counts.get(t, 0) + 1
+        else:
+            for p in r.publications:
+                t = self._quick_rank(p.venue)
+                tier_counts[t] = tier_counts.get(t, 0) + 1
+        r.venue_tier_counts = tier_counts
 
     def _compute_scores(self, r) -> dict:
         return {
