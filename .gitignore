@@ -1,10 +1,16 @@
 # ignore environment and data
 .env
+
+# Resume files — NEVER commit candidate data
+*.pdf
+*.docx
+*.doc
 RESUME OTHERS/
 run6/
 test_cvs/
 results*.json
 .cache/
+
 *.pyc
 __pycache__/
 *.pyo
