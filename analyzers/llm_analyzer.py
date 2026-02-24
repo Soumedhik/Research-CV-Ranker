@@ -9,6 +9,7 @@ import re
 import sys
 import time
 from dataclasses import dataclass, field
+from difflib import SequenceMatcher
 from typing import Optional
 
 from groq import Groq
@@ -189,7 +190,16 @@ class LLMAnalyzer:
         try:
             response = self._call_groq(prompt)
             data = self._parse_json(response)
-            return self._build_analyzed(resume, data)
+            analyzed = self._build_analyzed(resume, data)
+            # Second pass: regex-based extraction to catch missing papers
+            extra_pubs = self._regex_extract_publications(cv_text, analyzed.publications)
+            if extra_pubs:
+                analyzed.publications.extend(extra_pubs)
+                if self.verbose:
+                    console.print(
+                        f"  [dim]  +{len(extra_pubs)} paper(s) recovered by second-pass regex[/dim]"
+                    )
+            return analyzed
         except Exception as e:
             if self.verbose:
                 console.print(f"  [red]LLM error for {resume.filename}: {e}[/red]")
@@ -263,14 +273,41 @@ class LLMAnalyzer:
         # Strip markdown code fences if present
         text = re.sub(r"```(?:json)?\s*", "", text).strip()
         text = re.sub(r"```\s*$", "", text).strip()
+
+        # Attempt 1: strict parse
         try:
             return json.loads(text)
         except json.JSONDecodeError:
-            # Try to extract JSON object from surrounding text
-            match = re.search(r"\{.*\}", text, re.DOTALL)
-            if match:
+            pass
+
+        # Attempt 2: extract the FIRST complete JSON object
+        # (handles "Extra data" where LLM appended text after the JSON)
+        depth = 0
+        start = -1
+        for i, ch in enumerate(text):
+            if ch == "{":
+                if depth == 0:
+                    start = i
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0 and start != -1:
+                    candidate = text[start:i + 1]
+                    try:
+                        return json.loads(candidate)
+                    except json.JSONDecodeError:
+                        pass
+                    break
+
+        # Attempt 3: find ANY JSON object via regex (last resort)
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        if match:
+            try:
                 return json.loads(match.group())
-            raise ValueError(f"Could not parse JSON from LLM response: {text[:200]}")
+            except json.JSONDecodeError:
+                pass
+
+        raise ValueError(f"Could not parse JSON from LLM response: {text[:300]}")
 
     def _build_analyzed(self, resume: RawResume, data: dict) -> "AnalyzedResume":
         analyzed = AnalyzedResume(raw=resume)
@@ -316,3 +353,108 @@ class LLMAnalyzer:
         analyzed.fit_notes = data.get("fit_notes", "")
 
         return analyzed
+
+    # ── Second-Pass Publication Extraction ─────────────────────────────────────
+
+    # Common citation patterns:
+    #   [1] Author et al., "Title", Venue, Year.
+    #   Author, A., Author, B. (Year). Title. Venue, ...
+    #   Author et al. Title. In Proc. of Venue, Year.
+    _CITATION_PATTERNS = [
+        # Numbered: [1] ... "Title" ... Venue ... 20XX
+        re.compile(
+            r'\[\d+\]\s*'
+            r'(?P<authors>[^"]+?)'
+            r'["\u201c](?P<title>[^"\u201d]{15,})["\u201d]'
+            r'[,.]\s*(?P<rest>.+?)'
+            r'(?P<year>(?:19|20)\d{2})',
+            re.IGNORECASE,
+        ),
+        # APA-ish: Author (Year). Title. Venue.
+        re.compile(
+            r'(?P<authors>[A-Z][a-z]+(?:,?\s+(?:and\s+)?[A-Z]\.?[a-z]*)+)'
+            r'\s*\((?P<year>(?:19|20)\d{2})\)\.?\s*'
+            r'(?P<title>[^.]{15,}?)\.'  
+            r'\s*(?P<rest>.+)',
+            re.IGNORECASE,
+        ),
+        # Generic: Title. In Proceedings of / In Venue / Journal Name, Year
+        re.compile(
+            r'(?P<title>[A-Z][^.]{15,}?)\.\s*'
+            r'(?:In\s+)?(?:Proceedings\s+of\s+(?:the\s+)?)?'
+            r'(?P<rest>[A-Z][^.]+?)'
+            r'[,.]\s*(?P<year>(?:19|20)\d{2})',
+            re.IGNORECASE,
+        ),
+    ]
+
+    def _regex_extract_publications(
+        self,
+        cv_text: str,
+        existing_pubs: list[Publication],
+    ) -> list[Publication]:
+        """
+        Regex second-pass to catch publications the LLM missed.
+        Finds citation-like patterns in the raw text, deduplicates against
+        the LLM-extracted list using title similarity.
+        """
+        existing_titles = [p.title.lower().strip() for p in existing_pubs]
+        new_pubs: list[Publication] = []
+
+        for pattern in self._CITATION_PATTERNS:
+            for m in pattern.finditer(cv_text):
+                title = m.group("title").strip()
+                # Skip very short or very long "titles" (likely noise)
+                if len(title) < 15 or len(title) > 300:
+                    continue
+
+                # Deduplicate: skip if similar to any existing publication
+                if self._is_duplicate(title, existing_titles):
+                    continue
+
+                year_str = m.group("year") if "year" in m.groupdict() else None
+                year = int(year_str) if year_str else None
+
+                rest = m.group("rest") if "rest" in m.groupdict() else ""
+                venue = self._extract_venue_from_rest(rest)
+
+                authors_str = m.group("authors") if "authors" in m.groupdict() else ""
+                authors = [a.strip() for a in re.split(r",\s*|\s+and\s+", authors_str) if a.strip()]
+
+                pub = Publication(
+                    title=title,
+                    venue=venue,
+                    year=year,
+                    authors=authors[:10],  # cap
+                    is_first_author=False,  # can't reliably determine from regex
+                    raw_citation=m.group(0)[:300],
+                )
+                new_pubs.append(pub)
+                existing_titles.append(title.lower().strip())  # prevent self-duplication
+
+        return new_pubs
+
+    def _is_duplicate(self, title: str, existing_titles: list[str]) -> bool:
+        """Check if title is similar enough to an existing one (>0.7 ratio)."""
+        title_lower = title.lower().strip()
+        for et in existing_titles:
+            ratio = SequenceMatcher(None, title_lower, et).ratio()
+            if ratio > 0.7:
+                return True
+        return False
+
+    @staticmethod
+    def _extract_venue_from_rest(rest: str) -> str:
+        """Try to extract a venue name from the rest of a citation string."""
+        if not rest:
+            return ""
+        # Common venue prefixes
+        venue_match = re.match(
+            r'(?:In\s+)?(?:Proceedings\s+of\s+(?:the\s+)?)?'
+            r'([A-Z][^,.:;]{3,60})',
+            rest.strip(),
+            re.IGNORECASE,
+        )
+        if venue_match:
+            return venue_match.group(1).strip()
+        return rest.strip()[:60]

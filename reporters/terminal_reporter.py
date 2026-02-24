@@ -21,14 +21,14 @@ from rich.padding import Padding
 
 
 RANK_COLORS = {"A*": "bold magenta", "A": "bold cyan", "B": "bold yellow", "C": "dim yellow", "?": "dim white"}
-RANK_BADGES = {"A*": "★ A*", "A": "◆ A ", "B": "● B ", "C": "○ C ", "?": "· ? "}
+RANK_BADGES = {"A*": "* A*", "A": "+ A ", "B": "o B ", "C": "- C ", "?": ". ? "}
 
-MEDAL = {1: "🥇", 2: "🥈", 3: "🥉"}
+MEDAL = {1: "[1]", 2: "[2]", 3: "[3]"}
 SCORE_BAR_WIDTH = 30
 
 
 def score_bar(score: float, width: int = SCORE_BAR_WIDTH) -> str:
-    """Build a visual bar for a 0–100 score."""
+    """Build a visual bar for a 0-100 score."""
     filled = int((score / 100.0) * width)
     empty = width - filled
     if score >= 75:
@@ -37,7 +37,7 @@ def score_bar(score: float, width: int = SCORE_BAR_WIDTH) -> str:
         color = "yellow"
     else:
         color = "red"
-    return f"[{color}]{'█' * filled}[/{color}][dim]{'░' * empty}[/dim]"
+    return f"[{color}]{'#' * filled}[/{color}][dim]{'.' * empty}[/dim]"
 
 
 def score_color(score: float) -> str:
@@ -71,7 +71,7 @@ class TerminalReporter:
     # ── Leaderboard ───────────────────────────────────────────────────────────
 
     def _render_leaderboard(self, ranked: list, job_description: Optional[str]):
-        title = "🏆  RESEARCH CANDIDATE LEADERBOARD"
+        title = ">>  RESEARCH CANDIDATE LEADERBOARD"
         if job_description:
             title += f"  ·  [dim]Role: {job_description[:60]}[/dim]"
 
@@ -198,7 +198,7 @@ class TerminalReporter:
                                    title="[bold]Skills[/bold]", border_style="dim cyan",
                                    padding=(0, 1)))
         if r.awards:
-            awards_text = "\n".join(f"🏅 {a}" for a in r.awards[:5])
+            awards_text = "\n".join(f"  * {a}" for a in r.awards[:5])
             row_items.append(Panel(awards_text, title="[bold]Awards[/bold]",
                                    border_style="dim yellow", padding=(0, 1)))
         if row_items:
@@ -310,11 +310,12 @@ class TerminalReporter:
         table = Table(box=box.SIMPLE_HEAD, show_header=True,
                       header_style="bold dim", padding=(0, 1))
         table.add_column("Year", width=6, justify="center")
-        table.add_column("Venue", width=8, justify="center")
-        table.add_column("Title", min_width=40)
-        table.add_column("★ First", width=7, justify="center")
+        table.add_column("Rank", width=8, justify="center")
+        table.add_column("Title", min_width=36)
+        table.add_column("Venue", min_width=12)
+        table.add_column("1st", width=4, justify="center")
         table.add_column("Cites", width=7, justify="right")
-        table.add_column("SS Link", width=12)
+        table.add_column("Src", width=4, justify="center")
 
         all_papers = sorted(
             (p for yr, ps in year_map.items() for p in ps),
@@ -327,19 +328,26 @@ class TerminalReporter:
             rank_style = RANK_COLORS.get(rank, "white")
             rank_label = RANK_BADGES.get(rank, rank)
 
-            title = p.get("title", "Unknown")[:70]
+            title = p.get("title", "Unknown")[:65]
+            # Prefer canonical venue name, fallback to raw
+            venue_display = p.get("venue_canonical") or p.get("venue", "")
+            venue_display = venue_display[:20] if venue_display else "—"
             cites = p.get("citation_count", 0) or 0
             first = "✓" if p.get("is_first_author") else ""
-            ss_url = p.get("semantic_scholar_url")
-            ss_link = Text("[SS]", style="link " + ss_url) if ss_url else Text("—", style="dim")
+
+            # Source indicator: SS=Semantic Scholar, OA=OpenAlex, CR=Crossref
+            src = p.get("lookup_source", "")
+            src_map = {"semantic_scholar": "SS", "openalex": "OA", "crossref": "CR", "cached": "$$"}
+            src_label = src_map.get(src, "—")
 
             table.add_row(
                 str(p.get("year") or "?"),
                 Text(rank_label, style=rank_style),
                 Text(title, style="white"),
+                Text(venue_display, style="dim"),
                 Text(first, style="bold green"),
                 Text(str(cites) if cites else "—", style="cyan"),
-                ss_link,
+                Text(src_label, style="dim"),
             )
 
         # Timeline visualization

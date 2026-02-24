@@ -101,7 +101,7 @@ class Scorer:
 
     def _quick_rank(self, venue: str) -> str:
         from analyzers.paper_analyzer import VenueRanker
-        r, _ = VenueRanker().rank(venue)
+        r, _, _ = VenueRanker(use_cache=False).rank(venue)
         return r
 
     # ── Research Experience ────────────────────────────────────────────────────

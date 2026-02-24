@@ -28,7 +28,7 @@ class Config:
 
     # ── Semantic Scholar API (free, no key needed) ─────────────────────────────
     semantic_scholar_base: str = "https://api.semanticscholar.org/graph/v1"
-    semantic_scholar_delay: float = 1.0  # seconds between requests (rate limit)
+    semantic_scholar_delay: float = 0.5  # seconds between requests (free tier allows ~1 req/sec)
 
     # ── OpenAlex API (free, no key needed) ────────────────────────────────────
     openalex_base: str = "https://api.openalex.org"

@@ -1,0 +1,373 @@
+{
+  "_meta": {
+    "description": "Venue name aliases → canonical short name. Used to normalize variant spellings before ranking lookup.",
+    "usage": "Lowercase the input venue name. Check if any alias key (also lowercased) is contained in it. If so, map to the canonical name.",
+    "updated": "2026-02"
+  },
+
+  "conferences": {
+    "conference on neural information processing systems": "NeurIPS",
+    "neural information processing systems": "NeurIPS",
+    "nips": "NeurIPS",
+    "neurips": "NeurIPS",
+
+    "international conference on machine learning": "ICML",
+    "icml": "ICML",
+
+    "international conference on learning representations": "ICLR",
+    "iclr": "ICLR",
+
+    "conference on computer vision and pattern recognition": "CVPR",
+    "ieee/cvf conference on computer vision and pattern recognition": "CVPR",
+    "ieee cvf conference on computer vision": "CVPR",
+    "cvpr": "CVPR",
+
+    "international conference on computer vision": "ICCV",
+    "ieee/cvf international conference on computer vision": "ICCV",
+    "iccv": "ICCV",
+
+    "european conference on computer vision": "ECCV",
+    "eccv": "ECCV",
+
+    "association for computational linguistics": "ACL",
+    "annual meeting of the association for computational linguistics": "ACL",
+    "proceedings of the acl": "ACL",
+
+    "conference on empirical methods in natural language processing": "EMNLP",
+    "empirical methods in natural language processing": "EMNLP",
+    "emnlp": "EMNLP",
+
+    "north american chapter of the association for computational linguistics": "NAACL",
+    "naacl-hlt": "NAACL",
+    "naacl": "NAACL",
+
+    "international acm sigir conference": "SIGIR",
+    "acm sigir": "SIGIR",
+    "sigir": "SIGIR",
+
+    "knowledge discovery and data mining": "KDD",
+    "acm sigkdd": "KDD",
+    "kdd": "KDD",
+
+    "the web conference": "WWW",
+    "international world wide web conference": "WWW",
+    "www": "WWW",
+
+    "symposium on theory of computing": "STOC",
+    "acm stoc": "STOC",
+    "stoc": "STOC",
+
+    "foundations of computer science": "FOCS",
+    "ieee focs": "FOCS",
+    "focs": "FOCS",
+
+    "symposium on operating systems principles": "SOSP",
+    "acm sosp": "SOSP",
+    "sosp": "SOSP",
+
+    "operating systems design and implementation": "OSDI",
+    "usenix osdi": "OSDI",
+    "osdi": "OSDI",
+
+    "networked systems design and implementation": "NSDI",
+    "usenix nsdi": "NSDI",
+    "nsdi": "NSDI",
+
+    "acm sigcomm conference": "SIGCOMM",
+    "sigcomm": "SIGCOMM",
+
+    "programming language design and implementation": "PLDI",
+    "acm sigplan pldi": "PLDI",
+    "pldi": "PLDI",
+
+    "principles of programming languages": "POPL",
+    "acm sigplan popl": "POPL",
+    "popl": "POPL",
+
+    "usenix security symposium": "USENIX Security",
+    "usenix security": "USENIX Security",
+
+    "ieee symposium on security and privacy": "IEEE S&P",
+    "ieee s&p": "IEEE S&P",
+    "ieee s and p": "IEEE S&P",
+    "oakland": "IEEE S&P",
+
+    "acm conference on computer and communications security": "CCS",
+    "acm ccs": "CCS",
+    "ccs": "CCS",
+
+    "network and distributed system security": "NDSS",
+    "ndss": "NDSS",
+
+    "very large data bases": "VLDB",
+    "vldb": "VLDB",
+    "pvldb": "VLDB",
+    "proceedings of the vldb endowment": "VLDB",
+
+    "acm sigmod": "SIGMOD",
+    "management of data": "SIGMOD",
+    "sigmod": "SIGMOD",
+
+    "international conference on data engineering": "ICDE",
+    "ieee icde": "ICDE",
+    "icde": "ICDE",
+
+    "conference on human factors in computing systems": "CHI",
+    "acm chi": "CHI",
+    "chi": "CHI",
+
+    "aaai conference on artificial intelligence": "AAAI",
+    "aaai": "AAAI",
+
+    "international joint conference on artificial intelligence": "IJCAI",
+    "ijcai": "IJCAI",
+
+    "uncertainty in artificial intelligence": "UAI",
+    "uai": "UAI",
+
+    "artificial intelligence and statistics": "AISTATS",
+    "aistats": "AISTATS",
+
+    "conference of the international speech communication association": "INTERSPEECH",
+    "interspeech": "INTERSPEECH",
+
+    "international conference on acoustics speech and signal processing": "ICASSP",
+    "ieee icassp": "ICASSP",
+    "icassp": "ICASSP",
+
+    "web search and data mining": "WSDM",
+    "acm wsdm": "WSDM",
+    "wsdm": "WSDM",
+
+    "acm conference on recommender systems": "RecSys",
+    "recsys": "RecSys",
+
+    "european conference on information retrieval": "ECIR",
+    "ecir": "ECIR",
+
+    "international conference on computational linguistics": "COLING",
+    "coling": "COLING",
+
+    "european chapter of the acl": "EACL",
+    "eacl": "EACL",
+
+    "international conference on software engineering": "ICSE",
+    "icse": "ICSE",
+
+    "foundations of software engineering": "FSE",
+    "acm sigsoft fse": "FSE",
+    "fse": "FSE",
+
+    "automated software engineering": "ASE",
+    "ase": "ASE",
+
+    "international symposium on software testing and analysis": "ISSTA",
+    "issta": "ISSTA",
+
+    "international conference on robotics and automation": "ICRA",
+    "ieee icra": "ICRA",
+    "icra": "ICRA",
+
+    "intelligent robots and systems": "IROS",
+    "ieee/rsj iros": "IROS",
+    "iros": "IROS",
+
+    "robotics: science and systems": "RSS",
+    "rss": "RSS",
+
+    "conference on robot learning": "CoRL",
+    "corl": "CoRL",
+
+    "medical image computing and computer assisted intervention": "MICCAI",
+    "miccai": "MICCAI",
+
+    "acm international conference on multimedia": "ACM MM",
+    "acm multimedia": "ACM MM",
+    "mm": "ACM MM",
+
+    "international conference on web services": "ICWSM",
+    "icwsm": "ICWSM",
+
+    "pacific-asia conference on knowledge discovery and data mining": "PAKDD",
+    "pakdd": "PAKDD",
+
+    "international conference on data mining": "ICDM",
+    "ieee icdm": "ICDM",
+    "icdm": "ICDM",
+
+    "siam international conference on data mining": "SDM",
+    "sdm": "SDM",
+
+    "international conference on pattern recognition": "ICPR",
+    "icpr": "ICPR",
+
+    "british machine vision conference": "BMVC",
+    "bmvc": "BMVC",
+
+    "winter conference on applications of computer vision": "WACV",
+    "wacv": "WACV",
+
+    "asian conference on computer vision": "ACCV",
+    "accv": "ACCV",
+
+    "conference on information and knowledge management": "CIKM",
+    "acm cikm": "CIKM",
+    "cikm": "CIKM",
+
+    "ecml pkdd": "ECML PKDD",
+    "european conference on machine learning": "ECML PKDD",
+    "ecml": "ECML PKDD",
+
+    "autonomous agents and multi-agent systems": "AAMAS",
+    "aamas": "AAMAS",
+
+    "european conference on artificial intelligence": "ECAI",
+    "ecai": "ECAI",
+
+    "international conference on information and knowledge management": "CIKM",
+
+    "conference on computational natural language learning": "CoNLL",
+    "conll": "CoNLL",
+
+    "annual conference of the international speech communication association": "INTERSPEECH",
+
+    "ieee international conference on big data": "BigData",
+    "ieee bigdata": "BigData",
+    "bigdata": "BigData",
+
+    "acl workshop": "ACL Workshop",
+    "emnlp workshop": "EMNLP Workshop",
+    "neurips workshop": "NeurIPS Workshop",
+    "icml workshop": "ICML Workshop",
+    "iclr workshop": "ICLR Workshop",
+    "cvpr workshop": "CVPR Workshop"
+  },
+
+  "journals": {
+    "journal of machine learning research": "JMLR",
+    "jmlr": "JMLR",
+
+    "transactions on pattern analysis and machine intelligence": "TPAMI",
+    "ieee tpami": "TPAMI",
+    "tpami": "TPAMI",
+    "ieee transactions on pattern analysis": "TPAMI",
+
+    "transactions on neural networks and learning systems": "TNNLS",
+    "ieee tnnls": "TNNLS",
+    "tnnls": "TNNLS",
+
+    "transactions on knowledge and data engineering": "TKDE",
+    "ieee tkde": "TKDE",
+    "tkde": "TKDE",
+
+    "transactions on information systems": "TOIS",
+    "acm tois": "TOIS",
+    "tois": "TOIS",
+
+    "artificial intelligence journal": "Artificial Intelligence",
+    "artificial intelligence": "Artificial Intelligence",
+
+    "machine learning journal": "Machine Learning",
+
+    "transactions of the association for computational linguistics": "TACL",
+    "tacl": "TACL",
+
+    "computational linguistics": "CL",
+
+    "international journal of computer vision": "IJCV",
+    "ijcv": "IJCV",
+
+    "computing surveys": "CSUR",
+    "acm computing surveys": "CSUR",
+    "csur": "CSUR",
+
+    "transactions on graphics": "TOG",
+    "acm tog": "TOG",
+    "tog": "TOG",
+
+    "ieee transactions on image processing": "TIP",
+    "tip": "TIP",
+
+    "ieee transactions on signal processing": "TSP",
+
+    "ieee transactions on software engineering": "TSE",
+    "tse": "TSE",
+
+    "ieee transactions on parallel and distributed systems": "TPDS",
+    "tpds": "TPDS",
+
+    "ieee transactions on visualization and computer graphics": "TVCG",
+    "tvcg": "TVCG",
+
+    "ieee transactions on mobile computing": "TMC",
+    "tmc": "TMC",
+
+    "vldb journal": "VLDB Journal",
+    "the vldb journal": "VLDB Journal",
+
+    "nature": "Nature",
+    "nature machine intelligence": "Nature Machine Intelligence",
+    "nature methods": "Nature Methods",
+    "nature communications": "Nature Communications",
+    "nature computational science": "Nature Computational Science",
+    "science": "Science",
+    "science advances": "Science Advances",
+    "science robotics": "Science Robotics",
+    "cell": "Cell",
+    "proceedings of the national academy of sciences": "PNAS",
+    "pnas": "PNAS",
+    "the lancet": "The Lancet",
+    "lancet": "The Lancet",
+    "lancet digital health": "The Lancet Digital Health",
+    "new england journal of medicine": "NEJM",
+    "nejm": "NEJM",
+    "bmj": "BMJ",
+    "jama": "JAMA",
+
+    "bioinformatics": "Bioinformatics",
+    "genome research": "Genome Research",
+    "genome biology": "Genome Biology",
+    "nucleic acids research": "Nucleic Acids Research",
+    "medical image analysis": "Medical Image Analysis",
+    "neuroimage": "NeuroImage",
+
+    "pattern recognition": "Pattern Recognition",
+    "neural networks": "Neural Networks",
+    "neurocomputing": "Neurocomputing",
+    "knowledge-based systems": "Knowledge-Based Systems",
+    "expert systems with applications": "Expert Systems with Applications",
+    "information sciences": "Information Sciences",
+    "information fusion": "Information Fusion",
+
+    "ieee access": "IEEE Access",
+    "plos one": "PLOS ONE",
+    "peerj": "PeerJ",
+    "peerj computer science": "PeerJ Computer Science",
+    "scientific reports": "Scientific Reports",
+    "frontiers in artificial intelligence": "Frontiers in AI",
+    "frontiers in computational neuroscience": "Frontiers in Computational Neuroscience",
+    "frontiers in robotics and ai": "Frontiers in Robotics and AI",
+
+    "communications of the acm": "CACM",
+    "cacm": "CACM",
+
+    "journal of artificial intelligence research": "JAIR",
+    "jair": "JAIR",
+
+    "natural language engineering": "NLE",
+    "language resources and evaluation": "LRE",
+    "computer speech and language": "Computer Speech and Language",
+
+    "robotics and autonomous systems": "Robotics and Autonomous Systems",
+    "autonomous robots": "Autonomous Robots",
+    "ieee robotics and automation letters": "IEEE RA-L",
+    "ra-l": "IEEE RA-L",
+
+    "empirical software engineering": "ESE",
+    "journal of systems and software": "JSS",
+    "software and systems modeling": "SoSyM",
+
+    "data mining and knowledge discovery": "DMKD",
+    "neural computation": "Neural Computation"
+  }
+}

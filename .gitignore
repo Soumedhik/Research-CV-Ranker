@@ -2,7 +2,9 @@
 .env
 RESUME OTHERS/
 run6/
+test_cvs/
 results*.json
+.cache/
 *.pyc
 __pycache__/
 *.pyo
